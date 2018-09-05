@@ -1,0 +1,79 @@
+﻿@model AccountViewModel
+@{
+    ViewData["Title"] = "Account Information";
+}
+
+<div class="row">
+    <h2>Account Information</h2>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-3">
+                <label asp-for="LoginName"></label>
+            </div>
+            <div class="col-md-6">
+                <input asp-for="LoginName" disabled ="disabled" />
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-3">
+                <label asp-for="AccountNumber"></label>
+            </div>
+            <div class="col-md-6">
+                <input asp-for="AccountNumber" disabled ="disabled"/>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-3">
+                <label asp-for="Balance"></label>
+            </div>
+            <div class="col-md-6">
+                <input asp-for="Balance" disabled ="disabled"/>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-3">
+                <label asp-for="CreateDate"></label>
+            </div>
+            <div class="col-md-6">
+                <input asp-for="CreateDate" disabled ="disabled"/>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <h2>Transaction History</h2>
+</div>
+<div class="row">
+    <div>
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#sent" aria-controls="sent" role="tab" data-toggle="tab">Sent</a></li>
+            <li role="presentation"><a href="#receive" aria-controls="receive" role="tab" data-toggle="tab">Received</a></li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="sent">
+                @Html.Partial("TransactionSentGrid")
+            </div>
+            <div role="tabpanel" class="tab-pane" id="receive">
+                @Html.Partial("TransactionReceivedGrid")
+            </div>
+        </div> 
+    </div>
+</div>
+
+<div>
+
+</div>
+
