@@ -19,5 +19,6 @@ namespace Bank.Data.Entity
 
         public DateTime CreateDate { get; set; }
 
+        public DateTime LastUpdate { get; set; }
     }
 }

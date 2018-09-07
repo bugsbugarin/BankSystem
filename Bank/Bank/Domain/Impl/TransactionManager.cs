@@ -27,7 +27,10 @@ namespace Bank.Domain.Impl
             Log.Information("Start - Deposit request to Account Id {0}", request.AccountId);
             using (TransactionScope scope = new TransactionScope())
             {
-                _accountRepository.Deposit(request.AccountId, request.Amount);
+                var account = _accountRepository.GetById(request.AccountId);
+                account.Balance += request.Amount;
+                _accountRepository.Update(account);
+
                 _transactionRepository.Insert(new TransactionLogEntity()
                 {
                     Amount = request.Amount,
@@ -62,17 +65,21 @@ namespace Bank.Domain.Impl
                 CommonHelper.ThrowAppException("Invalid destination account.");
             }
 
-            var accountEntity = _accountRepository.GetById(request.AccountId);
+            var sourceAccount = _accountRepository.GetById(request.AccountId);
 
-            if (accountEntity.Balance < request.Amount)
+            if (sourceAccount.Balance < request.Amount)
             {
                 CommonHelper.ThrowAppException("Insufficient funds");
             }
 
+            sourceAccount.Balance -= request.Amount;
+            destinationAccount.Balance += request.Amount;
+
             using (TransactionScope scope = new TransactionScope())
             {
-                _accountRepository.Withdraw(request.AccountId, request.Amount);
-                _accountRepository.Deposit(destinationAccount.Id, request.Amount);
+
+                _accountRepository.Update(sourceAccount);
+                _accountRepository.Update(destinationAccount);
                 _transactionRepository.Insert(new TransactionLogEntity()
                 {
                     Amount = request.Amount,
@@ -100,7 +107,9 @@ namespace Bank.Domain.Impl
             }
             using (TransactionScope scope = new TransactionScope())
             {
-                _accountRepository.Withdraw(request.AccountId, request.Amount);
+                accountEntity.Balance -= request.Amount;
+                _accountRepository.Update(accountEntity);
+
                 _transactionRepository.Insert(new TransactionLogEntity()
                 {
                     Amount = request.Amount,

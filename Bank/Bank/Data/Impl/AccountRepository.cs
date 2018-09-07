@@ -1,5 +1,6 @@
 ﻿using Bank.Data.Entity;
 using Bank.Data.Interface;
+using Bank.Exception;
 using Bank.Helper;
 using System;
 using System.Collections.Generic;
@@ -28,53 +29,40 @@ namespace Bank.Data.Impl
                 conn,
                 CommandType.Text,
                 @"INSERT INTO dbo.Account
-                    (Balance, LoginName, AccountNumber, CreateDate, Password)
-                    SELECT @Balance, @LoginName, @AccountNumber, @CreateDate, @Password",
+                    (Balance, LoginName, AccountNumber, CreateDate, Password, LastUpdate)
+                    SELECT @Balance, @LoginName, @AccountNumber, @CreateDate, @Password, GETUTCDATE()",
                 parameter);
             }
         }
 
-        public void Deposit(long id, decimal amount)
+        public void Update(AccountEntity entity)
         {
             var parameter = new[]
             {
-                new SqlParameter("@Id", id),
-                new SqlParameter("@Amount", amount),
+                new SqlParameter("@Id", entity.Id),
+                new SqlParameter("@Balance", entity.Balance),
+                new SqlParameter("@LastUpdate", entity.LastUpdate),
             };
-            using (var conn = new SqlConnection(SQLHelper.GetConnectionString()))
-            {
-                SQLHelper.ExecuteNonQuery(
-                conn,
-                CommandType.Text,
-                @"UPDATE 
-                    dbo.Account
-                    SET
-                    Balance = Balance + @Amount
-                    WHERE
-                    Id = @Id",
-                parameter);
-            }
-        }
 
-        public void Withdraw(long id, decimal amount)
-        {
-            var parameter = new[]
-            {
-                new SqlParameter("@Id", id),
-                new SqlParameter("@Amount", amount),
-            };
             using (var conn = new SqlConnection(SQLHelper.GetConnectionString()))
             {
-                SQLHelper.ExecuteNonQuery(
-                    conn,
-                    CommandType.Text,
-                    @"UPDATE 
-                        dbo.Account
-                        SET
-                        Balance = Balance - @Amount
-                        WHERE
-                        Id = @Id",
-                    parameter);
+                int ret = SQLHelper.ExecuteNonQuery(
+                                    conn,
+                                    CommandType.Text,
+                                    @"UPDATE 
+                                        dbo.Account
+                                        SET
+                                        Balance = @Balance,
+                                        LastUpdate = GETUTCDATE()
+                                        WHERE
+                                        Id = @Id AND
+                                        LastUpdate = @LastUpdate",
+                                    parameter);
+
+                if(ret != 1)
+                {
+                    throw new AppException("Update fail. Record is not updated.");
+                }
             }
         }
 
@@ -95,7 +83,8 @@ namespace Bank.Data.Impl
                                         LoginName,
                                         AccountNumber,
                                         Balance,
-                                        CreateDate
+                                        CreateDate,
+                                        LastUpdate
                                       FROM
                                         dbo.Account
                                       WHERE
@@ -156,7 +145,8 @@ namespace Bank.Data.Impl
                                         LoginName,
                                         AccountNumber,
                                         Balance,
-                                        CreateDate
+                                        CreateDate,
+                                        LastUpdate
                                       FROM
                                         dbo.Account
                                       WHERE

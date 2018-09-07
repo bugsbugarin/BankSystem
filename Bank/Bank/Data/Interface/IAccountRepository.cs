@@ -10,9 +10,7 @@ namespace Bank.Data.Interface
     {
         void Insert(AccountEntity request);
 
-        void Deposit(long id, decimal amount);
-
-        void Withdraw(long id, decimal amount);
+        void Update(AccountEntity request);
 
         AccountEntity GetById(long id);
 

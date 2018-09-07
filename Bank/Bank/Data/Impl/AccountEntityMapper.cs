@@ -23,6 +23,7 @@ namespace Bank.Data.Impl
                         CreateDate = DateTime.Parse(rdr["CreateDate"].ToString()),
                         Id = long.Parse(rdr["Id"].ToString()),
                         LoginName = rdr["LoginName"].ToString(),
+                        LastUpdate = (DateTime)rdr["LastUpdate"]
                     };
                 }
             }
