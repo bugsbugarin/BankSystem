@@ -29,8 +29,8 @@ namespace Bank.Data.Impl
                 conn,
                 CommandType.Text,
                 @"INSERT INTO dbo.Account
-                    (Balance, LoginName, AccountNumber, CreateDate, Password, LastUpdate)
-                    SELECT @Balance, @LoginName, @AccountNumber, @CreateDate, @Password, GETUTCDATE()",
+                    (Balance, LoginName, AccountNumber, CreateDate, Password)
+                    SELECT @Balance, @LoginName, @AccountNumber, @CreateDate, @Password",
                 parameter);
             }
         }
@@ -41,7 +41,7 @@ namespace Bank.Data.Impl
             {
                 new SqlParameter("@Id", entity.Id),
                 new SqlParameter("@Balance", entity.Balance),
-                new SqlParameter("@LastUpdate", entity.LastUpdate),
+                new SqlParameter("@Version", entity.Version),
             };
 
             using (var conn = new SqlConnection(SQLHelper.GetConnectionString()))
@@ -52,11 +52,10 @@ namespace Bank.Data.Impl
                                     @"UPDATE 
                                         dbo.Account
                                         SET
-                                        Balance = @Balance,
-                                        LastUpdate = GETUTCDATE()
+                                        Balance = @Balance
                                         WHERE
                                         Id = @Id AND
-                                        LastUpdate = @LastUpdate",
+                                        Version= @Version",
                                     parameter);
 
                 if(ret != 1)
@@ -84,7 +83,7 @@ namespace Bank.Data.Impl
                                         AccountNumber,
                                         Balance,
                                         CreateDate,
-                                        LastUpdate
+                                        Version
                                       FROM
                                         dbo.Account
                                       WHERE
@@ -146,7 +145,7 @@ namespace Bank.Data.Impl
                                         AccountNumber,
                                         Balance,
                                         CreateDate,
-                                        LastUpdate
+                                        Version
                                       FROM
                                         dbo.Account
                                       WHERE

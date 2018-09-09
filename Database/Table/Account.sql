@@ -14,7 +14,8 @@ CREATE TABLE [dbo].[Account](
 	[AccountNumber] [varchar](10) NOT NULL,
 	[Password] [varchar](255) NOT NULL,
 	[Balance] [decimal](18, 0) NOT NULL,
-	[CreateDate] [datetime] NOT NULL
+	[CreateDate] [datetime] NOT NULL,
+	[Version] [rowversion] NOT NULL
 ) ON [PRIMARY]
 GO
 

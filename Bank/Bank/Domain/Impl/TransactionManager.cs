@@ -15,7 +15,7 @@ namespace Bank.Domain.Impl
     {
         private ITransactionLogRepository _transactionRepository;
         private IAccountRepository _accountRepository;
-
+        
         public TransactionManager(ITransactionLogRepository transactionLogRepository, IAccountRepository accountRepository)
         {
             _transactionRepository = transactionLogRepository;
@@ -25,7 +25,13 @@ namespace Bank.Domain.Impl
         public void Deposit(TransactionRequestViewModel request)
         {
             Log.Information("Start - Deposit request to Account Id {0}", request.AccountId);
-            using (TransactionScope scope = new TransactionScope())
+
+            TransactionOptions options = new TransactionOptions
+            {
+                IsolationLevel = IsolationLevel.ReadCommitted
+            };
+
+            using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, options))
             {
                 var account = _accountRepository.GetById(request.AccountId);
                 account.Balance += request.Amount;
@@ -75,7 +81,12 @@ namespace Bank.Domain.Impl
             sourceAccount.Balance -= request.Amount;
             destinationAccount.Balance += request.Amount;
 
-            using (TransactionScope scope = new TransactionScope())
+            TransactionOptions options = new TransactionOptions
+            {
+                IsolationLevel = IsolationLevel.ReadCommitted
+            };
+
+            using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, options))
             {
 
                 _accountRepository.Update(sourceAccount);
@@ -105,7 +116,13 @@ namespace Bank.Domain.Impl
             {
                 CommonHelper.ThrowAppException("Insufficient funds");
             }
-            using (TransactionScope scope = new TransactionScope())
+
+            TransactionOptions options = new TransactionOptions
+            {
+                IsolationLevel = IsolationLevel.ReadCommitted
+            };
+
+            using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, options))
             {
                 accountEntity.Balance -= request.Amount;
                 _accountRepository.Update(accountEntity);
