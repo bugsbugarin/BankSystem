@@ -1,0 +1,3 @@
+- Login and Transaction file are screenshots of requests
+- OnSuccess file illustrates that the page goes back to the Account Information page meaning the transaction has persisted
+- Onfail file is the screenshot when the transaction fails on concurrency. Notice that the error message on the validation summary is 'Update fil. Record is not updated'
